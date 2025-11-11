@@ -1,48 +1,34 @@
-/*
- * Copyright (c) 2016 Intel Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * \brief Bluetooth observer sample + heartbeat blinky 
  */
 
-#include <stdio.h>
-#include <zephyr/kernel.h>
-#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include "heartbeat.h"
 
-/* 1000 msec = 1 sec */
-#define SLEEP_TIME_MS   1000
+int observer_start(void);
 
-/* The devicetree node identifier for the "led0" alias. */
-#define LED0_NODE DT_ALIAS(led0)
-
-/*
- * A build error on this line means your board is unsupported.
- * See the sample documentation for information on how to fix this.
- */
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
+/* setup functions and timers  */
+HEARTBEAT_SETUP(NULL);
 
 int main(void)
 {
-	int ret;
-	bool led_state = true;
+	int err;
 
-	if (!gpio_is_ready_dt(&led)) {
+	printk("Starting Observer Demo\n");
+
+	/* Initialize the Bluetooth Subsystem */
+	err = bt_enable(NULL);
+	if (err) {
+		printk("Bluetooth init failed (err %d)\n", err);
 		return 0;
 	}
 
-	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
-	if (ret < 0) {
-		return 0;
-	}
+	/* start heartbeat */
+	heartbeat_init();
 
-	while (1) {
-		ret = gpio_pin_toggle_dt(&led);
-		if (ret < 0) {
-			return 0;
-		}
+	(void)observer_start();
 
-		led_state = !led_state;
-		printf("LED state: %s\n", led_state ? "ON" : "OFF");
-		k_msleep(SLEEP_TIME_MS);
-	}
+	printk("Exiting %s thread.\n", __func__);
 	return 0;
 }
