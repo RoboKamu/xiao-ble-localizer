@@ -16,3 +16,8 @@ flash via:
 To see the serial port output for bluetooth ( on linux minicom ):
 
     minicom -D /dev/ttyACM0 -b 115200
+
+# Software Architecture 
+
+<img width="1024" height="772" alt="image" src="https://github.com/user-attachments/assets/b9cdc45f-98f1-43e7-9e5a-d25810e2c2b9" />
+
