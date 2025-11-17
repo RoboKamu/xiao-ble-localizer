@@ -16,7 +16,7 @@ const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 extern struct k_timer heartbeat_timer;
 
 
-extern void heartbeat_callback(struct k_timer *timer_id) {
+void heartbeat_callback(struct k_timer *timer_id) {
 	gpio_pin_toggle_dt(&led);
 	// static bool led_state;
 	// led_state = !led_state
